@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { FiSend } from "react-icons/fi";
 import { BsChevronDown, BsPlusLg } from "react-icons/bs";
+import { FiSend } from "react-icons/fi";
 import { RxHamburgerMenu } from "react-icons/rx";
-import useAnalytics from "@/hooks/useAnalytics";
+// import useAnalytics from "@/hooks/useAnalytics";
 import useAutoResizeTextArea from "@/hooks/useAutoResizeTextArea";
-import Message from "./Message";
 import { DEFAULT_OPENAI_MODEL } from "@/shared/Constants";
+import Message from "./Message";
 
 const Chat = (props: any) => {
   const { toggleComponentVisibility } = props;
@@ -15,7 +15,7 @@ const Chat = (props: any) => {
   const [showEmptyChat, setShowEmptyChat] = useState(true);
   const [conversation, setConversation] = useState<any[]>([]);
   const [message, setMessage] = useState("");
-  const { trackEvent } = useAnalytics();
+  // const { trackEvent } = useAnalytics();
   const textAreaRef = useAutoResizeTextArea();
   const bottomOfChatRef = useRef<HTMLDivElement>(null);
 
@@ -45,7 +45,7 @@ const Chat = (props: any) => {
       setErrorMessage("");
     }
 
-    trackEvent("send.message", { message: message });
+    // trackEvent("send.message", { message: message });
     setIsLoading(true);
 
     // Add the message to the conversation
@@ -60,25 +60,35 @@ const Chat = (props: any) => {
     setShowEmptyChat(false);
 
     try {
-      const response = await fetch(`/api/openai`, {
+      const body = JSON.stringify({
+        messages: [...conversation, { content: message, role: "user" }],
+        model: selectedModel,
+      });
+      console.log(body);
+      const response = await fetch(`http://127.0.0.1:8000/chatbot`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Origin: "http://localhost",
         },
         body: JSON.stringify({
           messages: [...conversation, { content: message, role: "user" }],
           model: selectedModel,
+          currentMessage: message,
         }),
       });
 
       if (response.ok) {
+        console.log("success");
+        console.log(response);
         const data = await response.json();
+        console.log(data);
 
         // Add the message to the conversation
         setConversation([
           ...conversation,
           { content: message, role: "user" },
-          { content: data.message, role: "system" },
+          { content: data.answer, role: "system" },
         ]);
       } else {
         console.error(response);
