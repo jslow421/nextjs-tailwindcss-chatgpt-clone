@@ -5,6 +5,7 @@ import { RxHamburgerMenu } from "react-icons/rx";
 // import useAnalytics from "@/hooks/useAnalytics";
 import useAutoResizeTextArea from "@/hooks/useAutoResizeTextArea";
 import { DEFAULT_OPENAI_MODEL } from "@/shared/Constants";
+import Image from "next/image";
 import Message from "./Message";
 
 const Chat = (props: any) => {
@@ -135,7 +136,12 @@ const Chat = (props: any) => {
               {!showEmptyChat && conversation.length > 0 ? (
                 <div className="flex flex-col items-center text-sm bg-gray-800">
                   <div className="flex w-full items-center justify-center gap-1 border-b border-black/10 bg-gray-50 p-3 text-gray-500 dark:border-gray-900/50 dark:bg-gray-700 dark:text-gray-300">
-                    Model: {selectedModel.name}
+                    <Image
+                      src="/logo.jpg"
+                      width={180}
+                      height={180}
+                      alt="Caylent Logo"
+                    ></Image>
                   </div>
                   {conversation.map((message, index) => (
                     <Message key={index} message={message} />
@@ -148,35 +154,16 @@ const Chat = (props: any) => {
                 <div className="py-10 relative w-full flex flex-col h-full">
                   <div className="flex items-center justify-center gap-2">
                     <div className="relative w-full md:w-1/2 lg:w-1/3 xl:w-1/4">
-                      <button
-                        className="relative flex w-full cursor-default flex-col rounded-md border border-black/10 bg-white py-2 pl-3 pr-10 text-left focus:border-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:border-white/20 dark:bg-gray-800 sm:text-sm align-center"
-                        id="headlessui-listbox-button-:r0:"
-                        type="button"
-                        aria-haspopup="true"
-                        aria-expanded="false"
-                        data-headlessui-state=""
-                        aria-labelledby="headlessui-listbox-label-:r1: headlessui-listbox-button-:r0:"
-                      >
-                        <label
-                          className="block text-xs text-gray-700 dark:text-gray-500 text-center"
-                          id="headlessui-listbox-label-:r1:"
-                          data-headlessui-state=""
-                        >
-                          Model
-                        </label>
-                        <span className="inline-flex w-full truncate">
-                          <span className="flex h-6 items-center gap-1 truncate text-white">
-                            {selectedModel.name}
-                          </span>
-                        </span>
-                        <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                          <BsChevronDown className="h-4 w-4 text-gray-400" />
-                        </span>
-                      </button>
+                      <Image
+                        src="/logo.jpg"
+                        width={180}
+                        height={180}
+                        alt="Caylent Logo"
+                      ></Image>
                     </div>
                   </div>
                   <h1 className="text-2xl sm:text-4xl font-semibold text-center text-gray-200 dark:text-gray-600 flex gap-2 items-center justify-center h-screen">
-                    ChatGPT Clone
+                    Caylent Chat
                   </h1>
                 </div>
               ) : null}
@@ -223,7 +210,7 @@ const Chat = (props: any) => {
           </form>
           <div className="px-3 pt-2 pb-3 text-center text-xs text-black/50 dark:text-white/50 md:px-4 md:pt-3 md:pb-6">
             <span>
-              ChatGPT Clone may produce inaccurate information about people,
+              Caylent Chat may produce inaccurate information about people,
               places, or facts.
             </span>
           </div>
