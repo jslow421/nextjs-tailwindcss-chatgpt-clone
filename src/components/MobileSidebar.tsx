@@ -2,7 +2,7 @@ import React from "react";
 import { IoMdClose } from "react-icons/io";
 import Sidebar from "./Sidebar";
 
-const MobileSiderbar = (props: any) => {
+export default function MobileSidebar(props: any) {
   const { toggleComponentVisibility } = props;
 
   return (
@@ -53,6 +53,4 @@ const MobileSiderbar = (props: any) => {
       </div>
     </div>
   );
-};
-
-export default MobileSiderbar;
+}

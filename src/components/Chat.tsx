@@ -4,11 +4,10 @@ import { FiSend } from "react-icons/fi";
 import { RxHamburgerMenu } from "react-icons/rx";
 // import useAnalytics from "@/hooks/useAnalytics";
 import useAutoResizeTextArea from "@/hooks/useAutoResizeTextArea";
-import { DEFAULT_OPENAI_MODEL } from "@/shared/Constants";
 import Image from "next/image";
 import Message from "./Message";
 
-const Chat = (props: any) => {
+export default function Chat(props: any) {
   const { toggleComponentVisibility } = props;
 
   const [isLoading, setIsLoading] = useState(false);
@@ -19,8 +18,6 @@ const Chat = (props: any) => {
   // const { trackEvent } = useAnalytics();
   const textAreaRef = useAutoResizeTextArea();
   const bottomOfChatRef = useRef<HTMLDivElement>(null);
-
-  const selectedModel = DEFAULT_OPENAI_MODEL;
 
   useEffect(() => {
     if (textAreaRef.current) {
@@ -34,6 +31,49 @@ const Chat = (props: any) => {
       bottomOfChatRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [conversation]);
+
+  const fetchStreamedText = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/chatbotstream", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Origin: "http://localhost",
+        },
+        body: JSON.stringify({
+          messages: [...conversation, { content: message, role: "user" }],
+          currentMessage: message,
+        }),
+      });
+
+      if (!response.body) {
+        console.error("Response body not available.");
+        return;
+      }
+
+      const reader = response.body.getReader();
+      let receivedText = "";
+
+      const readChunk = async () => {
+        const { done, value } = await reader.read();
+        if (done) {
+          return;
+        }
+        receivedText += new TextDecoder().decode(value);
+        console.log(receivedText);
+        setConversation([
+          ...conversation,
+          { content: message, role: "user" },
+          { content: receivedText, role: "system" },
+        ]);
+        readChunk(); // Read the next chunk
+      };
+
+      readChunk();
+    } catch (error) {
+      console.error("Error fetching streamed text:", error);
+    }
+  };
 
   const sendMessage = async (e: any) => {
     e.preventDefault();
@@ -59,50 +99,77 @@ const Chat = (props: any) => {
     // Clear the message & remove empty chat
     setMessage("");
     setShowEmptyChat(false);
+    fetchStreamedText();
 
-    try {
-      const body = JSON.stringify({
-        messages: [...conversation, { content: message, role: "user" }],
-        model: selectedModel,
-      });
-      console.log(body);
-      const response = await fetch(`http://127.0.0.1:8000/chatbot`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Origin: "http://localhost",
-        },
-        body: JSON.stringify({
-          messages: [...conversation, { content: message, role: "user" }],
-          model: selectedModel,
-          currentMessage: message,
-        }),
-      });
+    // try {
+    //   const body = JSON.stringify({
+    //     messages: [...conversation, { content: message, role: "user" }],
+    //   });
 
-      if (response.ok) {
-        console.log("success");
-        console.log(response);
-        const data = await response.json();
-        console.log(data);
+    //   const response = await axios.post(
+    //     "http://127.0.0.1:8000/stream_text",
+    //     {
+    //       messages: [...conversation, { content: message, role: "user" }],
+    //       currentMessage: message,
+    //     },
+    //     {
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //         Origin: "http://localhost",
+    //       },
+    //       responseType: "stream",
+    //     }
+    //   );
+    //   const stream = response.data;
+    //   const reader = response.data.getReader();
+    //   let textData = "";
 
-        // Add the message to the conversation
-        setConversation([
-          ...conversation,
-          { content: message, role: "user" },
-          { content: data.answer, role: "system" },
-        ]);
-      } else {
-        console.error(response);
-        setErrorMessage(response.statusText);
-      }
+    //   const readChunk = async () => {
+    //     const { done, value } = await reader.read();
+    //     if (done) {
+    //       return;
+    //     }
+    //     textData += new TextDecoder().decode(value);
+    //     console.log(textData);
+    //     readChunk(); // Read the next chunk
+    //   };
 
-      setIsLoading(false);
-    } catch (error: any) {
-      console.error(error);
-      setErrorMessage(error.message);
+    //   readChunk();
+    //   // .then((response) => {
+    //   //   response.data.on("data", (chunk: any) => {
+    //   //     console.log(chunk.toString());
+    //   //   });
 
-      setIsLoading(false);
-    }
+    //   //   response.data.on("end", () => {
+    //   //     // logic for stream complete
+    //   //     console.log("Stream Complete");
+    //   //   });
+    //   // });
+    //   //https://cdn.caylent.com/bedrock_new.zip
+    //   // if (response.status === 200) {
+    //   //   console.log("success");
+    //   //   console.log(response);
+    //   //   const data = await response.data;
+    //   //   console.log(data);
+
+    //   //   // Add the message to the conversation
+    //   //   setConversation([
+    //   //     ...conversation,
+    //   //     { content: message, role: "user" },
+    //   //     { content: data.answer, role: "system" },
+    //   //   ]);
+    //   // } else {
+    //   //   console.error(response);
+    //   //   setErrorMessage(response.statusText);
+    //   // }
+
+    //   setIsLoading(false);
+    // } catch (error: any) {
+    //   console.error(error);
+    //   setErrorMessage(error.message);
+
+    //   setIsLoading(false);
+    // }
   };
 
   const handleKeypress = (e: any) => {
@@ -131,16 +198,17 @@ const Chat = (props: any) => {
       </div>
       <div className="relative h-full w-full transition-width flex flex-col overflow-hidden items-stretch flex-1">
         <div className="flex-1 overflow-hidden">
-          <div className="react-scroll-to-bottom--css-ikyem-79elbk h-full dark:bg-gray-800">
+          <div className="react-scroll-to-bottom--css-ikyem-79elbk h-full dark:bg-caylent-body">
             <div className="react-scroll-to-bottom--css-ikyem-1n7m0yu">
               {!showEmptyChat && conversation.length > 0 ? (
                 <div className="flex flex-col items-center text-sm bg-gray-800">
                   <div className="flex w-full items-center justify-center gap-1 border-b border-black/10 bg-gray-50 p-3 text-gray-500 dark:border-gray-900/50 dark:bg-gray-700 dark:text-gray-300">
                     <Image
-                      src="/logo.jpg"
+                      src="/logo-white.png"
                       width={180}
                       height={180}
                       alt="Caylent Logo"
+                      className="mx-auto"
                     ></Image>
                   </div>
                   {conversation.map((message, index) => (
@@ -155,10 +223,11 @@ const Chat = (props: any) => {
                   <div className="flex items-center justify-center gap-2">
                     <div className="relative w-full md:w-1/2 lg:w-1/3 xl:w-1/4">
                       <Image
-                        src="/logo.jpg"
+                        src="/logo-white.png"
                         width={180}
                         height={180}
                         alt="Caylent Logo"
+                        className="mx-auto"
                       ></Image>
                     </div>
                   </div>
@@ -171,7 +240,7 @@ const Chat = (props: any) => {
             </div>
           </div>
         </div>
-        <div className="absolute bottom-0 left-0 w-full border-t md:border-t-0 dark:border-white/20 md:border-transparent md:dark:border-transparent md:bg-vert-light-gradient bg-white dark:bg-gray-800 md:!bg-transparent dark:md:bg-vert-dark-gradient pt-2">
+        <div className="absolute bottom-0 left-0 w-full border-t md:border-t-0 dark:border-white/20 md:border-transparent md:dark:border-transparent md:bg-vert-light-gradient bg-white dark:bg-gray-800 md:!bg-transparent pt-2">
           <form className="stretch mx-2 flex flex-row gap-3 last:mb-2 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-2xl xl:max-w-3xl">
             <div className="relative flex flex-col h-full flex-1 items-stretch md:flex-col">
               {errorMessage ? (
@@ -218,6 +287,4 @@ const Chat = (props: any) => {
       </div>
     </div>
   );
-};
-
-export default Chat;
+}

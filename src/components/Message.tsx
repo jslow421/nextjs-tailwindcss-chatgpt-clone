@@ -1,8 +1,8 @@
-import { SiOpenai } from "react-icons/si";
 import { HiUser } from "react-icons/hi";
+import { SiOpenai } from "react-icons/si";
 import { TbCursorText } from "react-icons/tb";
 
-const Message = (props: any) => {
+export default function Message(props: any) {
   const { message } = props;
   const { role, content: text } = message;
 
@@ -53,6 +53,4 @@ const Message = (props: any) => {
       </div>
     </div>
   );
-};
-
-export default Message;
+}

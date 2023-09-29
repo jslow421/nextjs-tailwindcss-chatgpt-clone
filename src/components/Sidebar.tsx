@@ -2,14 +2,14 @@ import React from "react";
 import {
   AiOutlineMessage,
   AiOutlinePlus,
-  AiOutlineUser,
   AiOutlineSetting,
+  AiOutlineUser,
 } from "react-icons/ai";
 import { BiLinkExternal } from "react-icons/bi";
 import { FiMessageSquare } from "react-icons/fi";
 import { MdLogout } from "react-icons/md";
 
-const Sidebar = () => {
+export default function Sidebar() {
   return (
     <div className="scrollbar-trigger flex h-full w-full flex-1 items-start border-white/20">
       <nav className="flex h-full flex-1 flex-col space-y-1 p-2">
@@ -23,7 +23,7 @@ const Sidebar = () => {
               <FiMessageSquare className="h-4 w-4" />
               <div className="flex-1 text-ellipsis max-h-5 overflow-hidden break-all relative">
                 New conversation
-                <div className="absolute inset-y-0 right-0 w-8 z-10 bg-gradient-to-l from-gray-900 group-hover:from-[#2A2B32]"></div>
+                <div className="absolute truncate inset-y-0 right-0 w-8 z-10  from-gray-900 group-hover:from-[#2A2B32]"></div>
               </div>
             </a>
           </div>
@@ -55,6 +55,4 @@ const Sidebar = () => {
       </nav>
     </div>
   );
-};
-
-export default Sidebar;
+}
