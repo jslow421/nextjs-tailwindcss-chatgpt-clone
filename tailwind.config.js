@@ -15,7 +15,7 @@ module.exports = {
         "caylent-green": "#88CC62",
         "caylent-body": "#091B29",
         "user-message": "#05B2DC",
-        "bot-message": "#087CA7",
+        "bot-message": "#5A5A5A",
       },
       width: {
         280: "280px",
