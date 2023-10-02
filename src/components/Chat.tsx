@@ -100,76 +100,6 @@ export default function Chat(props: any) {
     setMessage("");
     setShowEmptyChat(false);
     fetchStreamedText();
-
-    // try {
-    //   const body = JSON.stringify({
-    //     messages: [...conversation, { content: message, role: "user" }],
-    //   });
-
-    //   const response = await axios.post(
-    //     "http://127.0.0.1:8000/stream_text",
-    //     {
-    //       messages: [...conversation, { content: message, role: "user" }],
-    //       currentMessage: message,
-    //     },
-    //     {
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //         Origin: "http://localhost",
-    //       },
-    //       responseType: "stream",
-    //     }
-    //   );
-    //   const stream = response.data;
-    //   const reader = response.data.getReader();
-    //   let textData = "";
-
-    //   const readChunk = async () => {
-    //     const { done, value } = await reader.read();
-    //     if (done) {
-    //       return;
-    //     }
-    //     textData += new TextDecoder().decode(value);
-    //     console.log(textData);
-    //     readChunk(); // Read the next chunk
-    //   };
-
-    //   readChunk();
-    //   // .then((response) => {
-    //   //   response.data.on("data", (chunk: any) => {
-    //   //     console.log(chunk.toString());
-    //   //   });
-
-    //   //   response.data.on("end", () => {
-    //   //     // logic for stream complete
-    //   //     console.log("Stream Complete");
-    //   //   });
-    //   // });
-    //   //https://cdn.caylent.com/bedrock_new.zip
-    //   // if (response.status === 200) {
-    //   //   console.log("success");
-    //   //   console.log(response);
-    //   //   const data = await response.data;
-    //   //   console.log(data);
-
-    //   //   // Add the message to the conversation
-    //   //   setConversation([
-    //   //     ...conversation,
-    //   //     { content: message, role: "user" },
-    //   //     { content: data.answer, role: "system" },
-    //   //   ]);
-    //   // } else {
-    //   //   console.error(response);
-    //   //   setErrorMessage(response.statusText);
-    //   // }
-
-    //   setIsLoading(false);
-    // } catch (error: any) {
-    //   console.error(error);
-    //   setErrorMessage(error.message);
-
-    //   setIsLoading(false);
-    // }
   };
 
   const handleKeypress = (e: any) => {
@@ -214,7 +144,7 @@ export default function Chat(props: any) {
                   {conversation.map((message, index) => (
                     <Message key={index} message={message} />
                   ))}
-                  <div className="w-full h-32 md:h-48 flex-shrink-0"></div>
+                  <div className="w-full h-32 md:h-48 flex-shrink-0 bg-caylent-body"></div>
                   <div ref={bottomOfChatRef}></div>
                 </div>
               ) : null}
