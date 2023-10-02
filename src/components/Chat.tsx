@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useRef, useState } from "react";
 import { BsChevronDown, BsPlusLg } from "react-icons/bs";
 import { FiSend } from "react-icons/fi";

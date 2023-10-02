@@ -37,3 +37,9 @@ Contributions are welcome! If you find ChatGPT Clone useful, consider starring t
 ## License
 
 This project is open source and available under the [MIT License](https://opensource.org/licenses/MIT).
+
+## Deploy
+
+`npm run build`
+
+Copy the contents of the `out` folder to your server.

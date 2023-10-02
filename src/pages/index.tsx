@@ -1,3 +1,4 @@
+"use client";
 import Chat from "@/components/Chat";
 import MobileSidebar from "@/components/MobileSidebar";
 import Sidebar from "@/components/Sidebar";

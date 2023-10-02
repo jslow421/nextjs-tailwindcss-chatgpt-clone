@@ -1,0 +1,21 @@
+version: 0.2
+
+env:
+  parameter-store:
+    S3_BUCKET: /codebuild/s3-bucket
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+  pre_build:
+    commands:
+      - npm install
+  build:
+    commands:
+      - npm run build
+      - aws s3 sync out s3://**insertbucketvalue**
+  post_build:
+    commands:
+      - bash -c "if [ \"$CODEBUILD_BUILD_SUCCEEDING\" == \"0\" ]; then exit 1; fi"
+      - aws cloudfront create-invalidation --distribution-id E27NMC5UIA7ZLG --paths "/*"

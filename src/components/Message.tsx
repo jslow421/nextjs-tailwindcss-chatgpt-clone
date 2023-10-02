@@ -1,3 +1,4 @@
+"use client";
 import { HiUser } from "react-icons/hi";
 import { SiOpenai } from "react-icons/si";
 import { TbCursorText } from "react-icons/tb";
