@@ -20,6 +20,7 @@ export default function Chat(props: any) {
   const textAreaRef = useAutoResizeTextArea();
   const bottomOfChatRef = useRef<HTMLDivElement>(null);
 
+  class Answer {}
   useEffect(() => {
     if (textAreaRef.current) {
       textAreaRef.current.style.height = "24px";
@@ -48,32 +49,18 @@ export default function Chat(props: any) {
             question: message,
           }),
         }
-      );
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          setConversation([
+            ...conversation,
+            { content: message, role: "user" },
+            { content: data.answer, role: "system" },
+          ]);
+        });
 
-      if (!response.body) {
-        console.error("Response body not available.");
-        return;
-      }
-
-      const reader = response.body.getReader();
-      let receivedText = "";
-
-      const readChunk = async () => {
-        const { done, value } = await reader.read();
-        if (done) {
-          return;
-        }
-        receivedText += new TextDecoder().decode(value);
-        console.log(receivedText);
-        setConversation([
-          ...conversation,
-          { content: message, role: "user" },
-          { content: receivedText, role: "system" },
-        ]);
-        readChunk(); // Read the next chunk
-      };
-
-      readChunk();
+      return response;
     } catch (error) {
       console.error("Error fetching streamed text:", error);
     }
