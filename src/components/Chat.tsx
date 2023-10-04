@@ -35,17 +35,20 @@ export default function Chat(props: any) {
 
   const fetchStreamedText = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/chatbotstream", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Origin: "http://localhost",
-        },
-        body: JSON.stringify({
-          messages: [...conversation, { content: message, role: "user" }],
-          currentMessage: message,
-        }),
-      });
+      const response = await fetch(
+        "https://9khv50aaw9.execute-api.us-east-1.amazonaws.com/prod/",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Origin: "http://localhost",
+          },
+          body: JSON.stringify({
+            messages: [...conversation, { content: message, role: "user" }],
+            question: message,
+          }),
+        }
+      );
 
       if (!response.body) {
         console.error("Response body not available.");
