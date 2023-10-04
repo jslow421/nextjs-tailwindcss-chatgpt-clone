@@ -2,7 +2,8 @@ version: 0.2
 
 env:
   parameter-store:
-    S3_BUCKET: /codebuild/s3-bucket
+    S3_BUCKET: "GenAiFrontend:S3_Bucket"
+    DISTRIBUTION_ID: "GenAiFrontend:Distribution_Id"
 phases:
   install:
     runtime-versions:
@@ -14,8 +15,8 @@ phases:
   build:
     commands:
       - npm run build
-      - aws s3 sync out s3://**insertbucketvalue**
+      - aws s3 sync out s3://$S3_BUCKET
   post_build:
     commands:
       - bash -c "if [ \"$CODEBUILD_BUILD_SUCCEEDING\" == \"0\" ]; then exit 1; fi"
-      - aws cloudfront create-invalidation --distribution-id **CLOUDFRONT DISTRIBUTION ID *** --paths "/*"
+      - aws cloudfront create-invalidation --distribution-id $DISTRIBUTION_ID --paths "/*"
